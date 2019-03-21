@@ -19,17 +19,19 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     srv01.vm.network "private_network", ip: "192.168.55.100"
     # MySQL Port nur im Private Network sichtbar
 	# db.vm.network "forwarded_port", guest:3306, host:3306, auto_correct: false 
-		srv01.vm.provision "shell", inline: <<-SHELL
+	srv01.vm.synced_folder ".", "/var/www/html"	
+	srv01.vm.provision "shell", inline: <<-SHELL
 		sudo apt-get update
 		sudo apt-get -y install apache2
 		sudo ufw allow 'Apache'
 		sudo mkdir /var/www/webdav
-		sudo chown www-data.www-data /var/www/webdav
+		sudo chown -R www-data:www-data /var/www/webdav
 		sudo a2enmod dav
 		sudo a2enmod dav_fs
 		sudo a2ensite webdav
+		sudo rm /etc/apache2/sites-available/000-default.conf
+		sudo cp /var/www/html/000-default.conf /etc/apache2/sites-available/
 		sudo systemctl restart apache2
-		
 SHELL
 	end
    
