@@ -28,13 +28,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 		sudo apt-get -y install apache2
 		sudo ufw allow 'Apache'
 		sudo mkdir /var/www/webdav
+		sudo mkdir /var/www/webdav/invagranti
 		sudo chown -R www-data:www-data /var/www/webdav
 		sudo a2enmod dav
 		sudo a2enmod dav_fs
 		sudo a2ensite webdav
 		sudo rm /etc/apache2/sites-available/000-default.conf
+		sudo apt-get install apache2-utils
+		sudo cp /var/www/html/users.password /etc/apache2/
 		sudo cp /var/www/html/000-default.conf /etc/apache2/sites-available/
-		sudo systemctl restart apache2
+		sudo a2enmod auth_digest
+		sudo service apache2 restart
 SHELL
 	end
    # zusätzliche VM für Testzwecke
